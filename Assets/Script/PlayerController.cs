@@ -4,63 +4,82 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+namespace Unity.AI.Assistant.Agent.Dynamic.Extension.Editor
 {
-    [Header("Movement")]
-    public float walkSpeed = 5f;
-    public float runSpeed = 10f;
-    public float jumpForce = 5f;
-
-    private Rigidbody _rb;
-    private Vector2 moveInput;
-    private bool isRunning;
-    private bool jumpInput;
-
-    private void Awake()
+   
+    internal class CommandScript : MonoBehaviour
     {
-        _rb = GetComponent<Rigidbody>();
-    }
-
-    public void OnMove(InputAction.CallbackContext context)
-    {
-        // L?y gi� tr? di chuy?n (Vector2)
-        moveInput = context.ReadValue<Vector2>();
-    }
-
-    public void OnRun(InputAction.CallbackContext context)
-    {
-        // Ki?m tra tr?ng th�i ch?y
-        isRunning = context.performed;
-    }
-
-    public void OnJump(InputAction.CallbackContext context)
-    {
-        // Ki?m tra tr?ng th�i nh?y
-        if (context.performed)
+        [Header("Movement Settings")]
+        
+        public float walkSpeed = 5f;
+        
+        public float runSpeed = 10f;
+        
+        public float jumpForce = 5f;
+        [Header("Ground Check")]
+        
+        public Transform groundCheckPoint;
+        
+        public float groundCheckRadius = 0.2f;
+        
+        public LayerMask groundLayer;
+        private Rigidbody rb;
+        private Vector2 moveInput;
+        private bool isRunning;
+        private bool jumpInput;
+        private bool isGrounded;
+        private void Awake()
         {
-            jumpInput = true;
+            rb = GetComponent<Rigidbody>();
         }
-    }
 
-    private void FixedUpdate()
-    {
-        // Tinh toan van toc di chuyen
-        float speed = isRunning ? runSpeed : walkSpeed;
-        Vector3 moveDirection = new Vector3(moveInput.x, 0f, moveInput.y);
-        _rb.linearVelocity = new Vector3(moveDirection.x * speed, _rb.linearVelocity.y, moveDirection.z * speed);
-
-        // Xu ly nhay
-        if (jumpInput && IsGrounded())
+        public void OnMove(InputAction.CallbackContext context)
         {
-            Debug.Log(IsGrounded());
-            _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, jumpForce, _rb.linearVelocity.z);
-            jumpInput = false; // Reset trang thai nhay
+            // Get movement input
+            moveInput = context.ReadValue<Vector2>();
         }
-    }
 
-    private bool IsGrounded()
-    {
-        // Kiem tra xem nhan vat co dung tren mat dat khong
-        return Physics.Raycast(transform.position, Vector3.down, 1.1f);
+        public void OnRun(InputAction.CallbackContext context)
+        {
+            // Check if running
+            isRunning = context.performed;
+        }
+
+        public void OnJump(InputAction.CallbackContext context)
+        {
+            // Check if jump is triggered
+            if (context.performed)
+            {
+                jumpInput = true;
+            }
+        }
+
+        private void FixedUpdate()
+        {
+            // Check if the character is on the ground
+            isGrounded = Physics.CheckSphere(groundCheckPoint.position, groundCheckRadius, groundLayer);
+            // Calculate movement velocity
+            float speed = isRunning ? runSpeed : walkSpeed;
+            Vector3 moveDirection = new Vector3(moveInput.x, 0f, moveInput.y);
+            rb.linearVelocity = new Vector3(moveDirection.x * speed, rb.linearVelocity.y, moveDirection.z * speed);
+            // Handle jumping
+            if (jumpInput && isGrounded)
+            {
+                rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
+                jumpInput = false; // Reset jump input
+            }
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            // Visualize ground check in the editor
+            if (groundCheckPoint != null)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireSphere(groundCheckPoint.position, groundCheckRadius);
+            }
+        }
+
+       
     }
 }
