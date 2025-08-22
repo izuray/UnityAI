@@ -6,19 +6,19 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("C�i ??t di chuy?n")]
+    [Header("Movement")]
     public float walkSpeed = 5f;
     public float runSpeed = 10f;
     public float jumpForce = 5f;
 
-    private Rigidbody rb;
+    private Rigidbody _rb;
     private Vector2 moveInput;
     private bool isRunning;
     private bool jumpInput;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        _rb = GetComponent<Rigidbody>();
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -44,22 +44,22 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // T�nh to�n v?n t?c di chuy?n
+        // Tinh toan van toc di chuyen
         float speed = isRunning ? runSpeed : walkSpeed;
         Vector3 moveDirection = new Vector3(moveInput.x, 0f, moveInput.y);
-        rb.linearVelocity = new Vector3(moveDirection.x * speed, rb.linearVelocity.y, moveDirection.z * speed);
+        _rb.linearVelocity = new Vector3(moveDirection.x * speed, _rb.linearVelocity.y, moveDirection.z * speed);
 
-        // X? l� nh?y
+        // Xu ly nhay
         if (jumpInput && IsGrounded())
         {
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
-            jumpInput = false; // Reset tr?ng th�i nh?y
+            _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, jumpForce, _rb.linearVelocity.z);
+            jumpInput = false; // Reset trang thai nhay
         }
     }
 
     private bool IsGrounded()
     {
-        // Ki?m tra n?u nh�n v?t ?ang ??ng tr�n m?t ??t
+        // Kiem tra xem nhan vat co dung tren mat dat khong
         return Physics.Raycast(transform.position, Vector3.down, 1.1f);
     }
 }
