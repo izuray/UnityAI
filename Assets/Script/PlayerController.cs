@@ -52,6 +52,7 @@ public class PlayerController : MonoBehaviour
         // Xu ly nhay
         if (jumpInput && IsGrounded())
         {
+            Debug.Log(IsGrounded());
             _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, jumpForce, _rb.linearVelocity.z);
             jumpInput = false; // Reset trang thai nhay
         }
