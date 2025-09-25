@@ -3,7 +3,7 @@ public class EnemyController
 
 
     public GameObject EnemyPrefabs;
-    public int Score = 0;
+    public int Score = 10;
 
     public string name = "dinhbv";
 
