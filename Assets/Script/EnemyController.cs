@@ -4,6 +4,7 @@ public class EnemyController
 
     public GameObject EnemyPrefabs;
     public int Score = 0;
+    public string name = "dinhbv";
 
     void Start()
     {
