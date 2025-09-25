@@ -3,7 +3,7 @@ public class EnemyController
 
 
     public GameObject EnemyPrefabs;
-
+    public int Score = 0;
 
     void Start()
     {

@@ -8,10 +8,11 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Rotation Settings")]
     public float rotationSpeed = 50f; // Speed of rotation in degrees per second
-
+    public float _movementSpeed = 10f;
     void Update()
     {
-        // Check if the left arrow key is pressed
+        // Check if the left arro
+        // w key is pressed
         if (Keyboard.current.leftArrowKey.isPressed)
         {
             // Rotate the object slowly to the left (negative Y-axis rotation)
